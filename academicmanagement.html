@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Sync - Academic Manager (Tracker Style)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Define key colors from the Tracker's CSS variables for use in Tailwind
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-pink': '#ff0055',    // --primary-pink
+                        'bg-start': '#050511',       // --bg-gradient-start
+                        'bg-end': '#181038',         // --bg-gradient-end
+                        'card-bg-base': 'rgba(30, 30, 60, 0.6)', // Base for card
+                        'text-main': '#ffffff',      // --text-main
+                        'text-muted': '#a0a0b0',     // --text-muted
+                        'input-bg-base': 'rgba(0, 0, 0, 0.3)', // Base for input
+                        'border-base': 'rgba(255, 255, 255, 0.1)', // --border-color
+                        'focus-purple': '#6a11cb',   // Focus color from Tracker CSS
+                        'day-box-bg': 'rgba(30, 30, 60, 0.4)', // Slightly less opaque card background
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Import Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* Define CSS variables for non-Tailwind use (like gradients and opacity) */
+        :root {
+            --primary-pink: #ff0055; 
+            --bg-gradient-start: #050511;
+            --bg-gradient-end: #181038;
+            --card-bg: rgba(30, 30, 60, 0.6);
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html, body {
+            min-height: 100vh; 
+            overflow-y: auto; 
+        }
+            
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-main);
+        }
+        
+        /* --- FLOATING BACK BUTTON --- */
+        #back-button {
+            /* Position fixed to float on the page */
+            position: fixed;
+            top: 30px; /* Distance from the top of the viewport */
+            left: 5%; /* Distance from the left side (matching your padding) */
+            
+            /* Styling to match the dark/neon theme */
+            background: rgba(255, 0, 128, 0.1); /* Subtle background using accent color */
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            
+            /* Padding and shape */
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--primary-pink); /* Neon border */
+            
+            /* Subtle shadow/glow */
+            box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+            
+            /* Ensures it stays above all other content */
+            z-index: 999; 
+            
+            /* Transition for a smooth hover effect */
+            transition: all 0.3s ease;
+        }
+
+        #back-button:hover {
+            background: var(--primary-pink); /* Solid accent color on hover */
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 0 20px var(--primary-pink); /* Brighter glow */
+        }
+
+        /* Style for the arrow character */
+        #back-button .arrow {
+            margin-right: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1; /* Ensure vertical alignment */
+        }
+        
+        /* --- CARD STYLE --- */
+        .card {
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            backdrop-filter: blur(12px); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .day-box {
+            background-color: rgba(30, 30, 60, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        
+        .section-title {
+            color: var(--primary-pink);
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- INPUT STYLES --- */
+        .form-input, .class-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--input-bg);
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        .form-input:focus, .class-input:focus { 
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.5); 
+        }
+
+        /* --- BUTTON STYLES --- */
+        .primary-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-pink);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(255, 0, 85, 0.5);
+        }
+        .primary-button:hover { 
+            opacity: 0.9; 
+            transform: translateY(-2px); 
+        }
+
+        /* Add Class Button */
+        .add-class-btn {
+            background: transparent;
+            color: var(--text-muted); 
+            transition: 0.2s;
+        }
+        .add-class-btn:hover { 
+            color: var(--primary-pink); 
+        }
+        
+        /* Remove Button */
+        .remove-class-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+        .remove-class-btn:hover {
+             background-color: var(--primary-pink);
+             color: white;
+        }
+
+        /* Reminder/Output styling */
+        .reminder-box {
+            background-color: rgba(106, 17, 203, 0.2);
+            border-left: 4px solid var(--primary-pink); 
+        }
+    </style>
+</head>
+<body>
+
+<a href="homepage.html" id="back-button">
+    <span class="arrow">←</span> Back
+</a>
+
+    <div id="app" class="min-h-screen p-4 md:p-8 pt-8 md:pt-12">
+        
+        <!-- CHANGED: Reduced space-y-12 to space-y-6 -->
+        <main id="feature-content" class="max-w-5xl mx-auto space-y-6">
+            
+            <!-- CHANGED: Removed bottom padding (py-6 -> pt-6 pb-2) -->
+            <header class="pt-6 md:pt-10 pb-2">
+                <div class="max-w-lg">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2">Academic Manager</h1>
+                    <p class="text-lg text-text-muted">
+                        Your hub for academic scheduling and well-being goals.
+                    </p>
+                </div>
+            </header>
+
+            <div id="status-message" class="text-left text-text-muted font-semibold">
+                Application Ready.
+            </div>
+            
+            <div id="user-id-display" class="card p-4 text-sm text-text-muted">
+                User ID: <span id="userIdSpan" class="font-mono text-primary-pink">Loading...</span>
+            </div>
+
+            <section class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-6 section-title">1. Input Class Schedule (Mon-Sat)</h2>
+                <div id="scheduleForm" class="grid grid-cols-1 gap-6">
+                    </div>
+                <button id="saveScheduleBtn" class="primary-button py-3 px-6 rounded-lg mt-6 shadow-md">
+                    Save Schedule
+                </button>
+            </section>
+
+            <section class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-6 section-title">2. Set Study and Sleep Goals</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="sleepGoal" class="block text-text-muted mb-2">Target Sleep Hours (per night)</label>
+                        <input type="number" id="sleepGoal" min="4" max="12" placeholder="e.g., 8" class="form-input" value="8">
+                    </div>
+                    <div>
+                        <label for="studyGoal" class="block text-text-muted mb-2">Target Study Hours (per day)</label>
+                        <input type="number" id="studyGoal" min="0.5" step="0.5" placeholder="e.g., 3" class="form-input" value="3">
+                    </div>
+                </div>
+                <button id="saveGoalsBtn" class="primary-button py-3 px-6 rounded-lg mt-6 shadow-md">
+                    Save Goals
+                </button>
+            </section>
+
+            <section class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-6 section-title">3. Your Reminders Dashboard</h2>
+                <div id="remindersOutput" class="space-y-4 text-white">
+                    </div>
+            </section>
+        </main>
+
+        <div id="customModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+            <div class="card w-full max-w-sm p-6 space-y-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-primary-pink">Notification</h3>
+                <p id="modalMessage" class="text-text-muted"></p>
+                <div class="flex justify-end space-x-3">
+                    <button id="modalConfirmBtn" class="primary-button py-2 px-4 rounded-lg hidden">Confirm</button>
+                    <button id="modalCloseBtn" class="bg-transparent border border-text-muted hover:border-primary-pink text-text-muted hover:text-primary-pink font-bold py-2 px-4 rounded-lg transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global state variables
+        let userId = 'loading';
+        const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        // Initialize default state
+        let currentSchedule = {};
+        let currentGoals = { sleepGoal: 8, studyGoal: 3 };
+
+        // --- Custom Modal Function (replaces alert/confirm) ---
+        function showModal(title, message, isConfirm = false) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalCloseBtn = document.getElementById('modalCloseBtn');
+                const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+
+                if (isConfirm) {
+                    modalConfirmBtn.classList.remove('hidden');
+                    modalCloseBtn.textContent = 'Cancel';
+                } else {
+                    modalConfirmBtn.classList.add('hidden');
+                    modalCloseBtn.textContent = 'Close';
+                }
+
+                modal.classList.remove('hidden');
+
+                const closeModal = (result) => {
+                    modal.classList.add('hidden');
+                    modalCloseBtn.onclick = null;
+                    modalConfirmBtn.onclick = null;
+                    resolve(result);
+                };
+
+                modalCloseBtn.onclick = () => closeModal(false);
+                modalConfirmBtn.onclick = () => closeModal(true);
+            });
+        }
+
+        // --- Core: Real-time input update handler (updates local state immediately) ---
+        function handleInputUpdate(event) {
+            const input = event.target;
+            const day = input.dataset.day;
+            const type = input.dataset.type; // 'name' or 'time'
+            const index = parseInt(input.dataset.index);
+            const value = input.value;
+
+            if (currentSchedule[day] && currentSchedule[day][index]) {
+                currentSchedule[day][index][type] = value;
+            }
+        }
+
+        // --- UI Rendering Functions ---
+
+        function renderClassInput(day, index, name, time) {
+            // Updated classes to use 'class-input' and re-styled buttons
+            return `
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center" data-index="${index}">
+                    <input type="text" data-day="${day}" data-type="name" data-index="${index}" value="${name}" placeholder="Class Name (e.g., Physics 101)" 
+                            class="class-input w-full sm:w-1/2">
+                    <input type="time" data-day="${day}" data-type="time" data-index="${index}" value="${time}" 
+                            class="class-input w-full sm:w-1/4">
+                    <button type="button" data-day="${day}" data-index="${index}" class="remove-class-btn p-2 rounded-full flex-shrink-0 w-full sm:w-auto">
+                        <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderScheduleForm() {
+            const scheduleForm = document.getElementById('scheduleForm');
+            scheduleForm.innerHTML = ''; // Clear previous content
+
+            DAYS.forEach(day => {
+                const classes = currentSchedule[day] || [{ name: '', time: '' }];
+                const dayDiv = document.createElement('div');
+                // Updated classes to use 'day-box' for daily containers
+                dayDiv.className = 'p-4 rounded-lg day-box';
+                dayDiv.innerHTML = `
+                    <h4 class="text-xl font-semibold mb-3 text-primary-pink">${day}</h4>
+                    <div id="classes-${day}" class="space-y-3">
+                        ${classes.map((c, index) => renderClassInput(day, index, c.name, c.time)).join('')}
+                    </div>
+                    <button type="button" data-day="${day}" class="add-class-btn mt-3 text-sm flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Add Class
+                    </button>
+                `;
+                scheduleForm.appendChild(dayDiv);
+            });
+
+            // CRITICAL: Re-attach event listeners for dynamically created elements
+            document.querySelectorAll('.add-class-btn').forEach(button => {
+                button.addEventListener('click', (e) => addClassInput(e.currentTarget.dataset.day));
+            });
+            document.querySelectorAll('.remove-class-btn').forEach(button => {
+                button.addEventListener('click', (e) => removeClassInput(e.currentTarget.dataset.day, parseInt(e.currentTarget.dataset.index)));
+            });
+            document.querySelectorAll('.class-input').forEach(input => {
+                input.addEventListener('input', handleInputUpdate);
+            });
+        }
+
+        function addClassInput(day) {
+            const classes = currentSchedule[day] || [];
+            classes.push({ name: '', time: '' });
+            currentSchedule[day] = classes;
+            renderScheduleForm(); 
+        }
+
+        function removeClassInput(day, index) {
+            const classes = currentSchedule[day];
+            if (classes && classes.length > 1) {
+                classes.splice(index, 1);
+                currentSchedule[day] = classes;
+                renderScheduleForm();
+            } else if (classes && classes.length === 1) {
+                // If only one, reset it to empty
+                currentSchedule[day] = [{ name: '', time: '' }];
+                renderScheduleForm();
+            }
+        }
+
+        function renderGoals() {
+            document.getElementById('sleepGoal').value = currentGoals.sleepGoal;
+            document.getElementById('studyGoal').value = currentGoals.studyGoal;
+        }
+
+        function renderReminders() {
+            const remindersOutput = document.getElementById('remindersOutput');
+            const sleepGoal = currentGoals.sleepGoal;
+            const studyGoal = currentGoals.studyGoal;
+
+            // Updated classes to use 'reminder-box' for blue accent on the left
+            remindersOutput.innerHTML = `
+                <p class="p-4 reminder-box">
+                    <strong class="text-primary-pink">Sleep Reminder:</strong> Based on your ${sleepGoal}-hour goal, you need sufficient time to rest!
+                </p>
+                <p class="p-4 reminder-box">
+                    <strong class="text-primary-pink">Study Reminder:</strong> Aim to complete your ${studyGoal} hours of focused study today.
+                </p>
+                <p class="text-sm italic text-text-muted mt-4">
+                    (Conceptual: In a production app, the "asleep by" time would be calculated dynamically using your class schedule.)
+                </p>
+            `;
+        }
+
+        function renderUI() {
+            renderScheduleForm();
+            renderGoals();
+            renderReminders();
+            document.getElementById('userIdSpan').textContent = userId;
+        }
+
+
+        // --- Save Functions (Only update local state) ---
+
+        async function saveSchedule() {
+            const scheduleData = {};
+            
+            // 1. Filter and format data from the current state
+            DAYS.forEach(day => {
+                const dayClasses = currentSchedule[day] || [];
+                scheduleData[day] = dayClasses
+                    .filter(c => c.name || c.time) 
+                    .map(c => ({ name: c.name, time: c.time })); 
+
+                // Ensure one empty row remains in the state to allow adding new classes easily
+                if (scheduleData[day].length === 0) {
+                    scheduleData[day] = [{ name: '', time: '' }];
+                }
+            });
+
+            currentSchedule = scheduleData; // Update local state
+            renderUI(); // Re-render the form to reflect any cleanup/normalization
+            showModal('Save Successful', 'Academic Schedule saved successfully!');
+        }
+
+        async function saveGoals() {
+            const sleepGoal = parseFloat(document.getElementById('sleepGoal').value);
+            const studyGoal = parseFloat(document.getElementById('studyGoal').value);
+
+            if (isNaN(sleepGoal) || sleepGoal <= 0 || isNaN(studyGoal) || studyGoal < 0) {
+                showModal('Input Error', 'Please enter valid positive numbers for sleep and study goals.');
+                return;
+            }
+
+            currentGoals = { sleepGoal, studyGoal }; // Update local state
+            renderUI(); // Update the reminders dashboard
+            showModal('Save Successful', 'Study and Sleep Goals saved successfully!');
+        }
+
+        // --- Event Listener Setup ---
+        function attachStaticListeners() {
+            // Event Listeners for Save buttons (static elements)
+            document.getElementById('saveScheduleBtn').addEventListener('click', saveSchedule);
+            document.getElementById('saveGoalsBtn').addEventListener('click', saveGoals);
+        }
+
+        // --- Initial Load ---
+
+        function initializeAppLogic() {
+            // Set up the temporary local state and ID
+            userId = crypto.randomUUID(); 
+            document.getElementById('status-message').textContent = 'Application Ready.';
+
+            // Initialize default schedule structure
+            currentSchedule = DAYS.reduce((acc, day) => {
+                acc[day] = [{ name: '', time: '' }];
+                return acc;
+            }, {});
+            
+            // Initial render
+            renderUI();
+        }
+
+        // Use DOMContentLoaded to ensure the script runs after all elements are available
+        document.addEventListener('DOMContentLoaded', () => {
+            attachStaticListeners();
+            initializeAppLogic();
+        });
+    </script>
+</body>
+</html>

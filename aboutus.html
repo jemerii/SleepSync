@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Sync - About the Team</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons (for nice modern icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0B0E23', // Deep background based on screenshot
+                            card: '#151a37', // Slightly lighter for cards
+                            accent: '#F5256C', // The pinkish-red button color
+                            accentHover: '#D41453',
+                            blueGlow: '#3B82F6',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050714;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(245, 37, 108, 0.1) 0%, transparent 20%);
+            color: white;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(21, 26, 55, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(245, 37, 108, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(245, 37, 108, 0.2);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(90deg, #3B82F6 0%, #F5256C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-blue {
+            background: linear-gradient(to bottom, #7ca6fc, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0E23;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3766;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F5256C;
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans overflow-x-hidden relative">
+
+    <!-- Navigation Area -->
+    <nav class="w-full px-6 py-6 flex justify-between items-center max-w-7xl mx-auto">
+        <!-- 1. Updated Link to homepage.html -->
+        <a href="homepage.html" class="flex items-center gap-2 group">
+            <div class="w-10 h-10 rounded-full bg-brand-card flex items-center justify-center border border-white/10 group-hover:border-brand-accent transition-colors">
+                <i class="ph-bold ph-arrow-left text-white group-hover:text-brand-accent transition-colors"></i>
+            </div>
+            <span class="text-gray-400 group-hover:text-white transition-colors text-sm font-medium">Back to Home</span>
+        </a>
+        
+        <!-- Logo -->
+
+
+        <!-- Empty div for balance -->
+        <div class="w-24 hidden md:block"></div>
+    </nav>
+
+    <!-- Hero / About Section -->
+    <header class="relative px-6 py-12 md:py-20 max-w-5xl mx-auto text-center z-10">
+        
+        <!-- Decorative Glow Behind -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-600/20 blur-[100px] -z-10 rounded-full"></div>
+
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+            Meet the <span class="text-gradient">Innovators</span>
+        </h1>
+        
+        <p class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
+            Sleep Sync is your ultimate hub for sleep tracking, academic schedule planning, smartphone usage insights, and personalized reminders. We are dedicated to synchronizing your life for peak performance.
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <!-- 2. Updated to link to a PDF file -->
+            <a href="research/[ 2 ] ESU & SQ - Quantitative Correlational Study (Q2 Defense ver.).pdf" target="_blank" class="px-8 py-3 bg-brand-accent hover:bg-brand-accentHover text-white rounded-full font-semibold transition-all shadow-[0_0_20px_rgba(245,37,108,0.3)] hover:shadow-[0_0_30px_rgba(245,37,108,0.5)] flex items-center gap-2">
+                <i class="ph-bold ph-read-cv-logo text-xl"></i>
+                Read Our Research Paper
+            </a>
+            <!-- 4. Contact Us Button triggers modal -->
+            <button id="contact-btn" class="px-8 py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full font-semibold transition-all backdrop-blur-sm flex items-center gap-2">
+                <i class="ph-bold ph-envelope-simple text-xl"></i>
+                Contact Us
+            </button>
+        </div>
+    </header>
+
+    <!-- Team Grid Section -->
+    <main class="max-w-7xl mx-auto px-6 pb-24">
+        
+        <div class="flex items-center gap-4 mb-12">
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent to-gray-700"></div>
+            <h2 class="text-2xl font-semibold text-gray-200">The Research Team</h2>
+            <div class="h-px flex-1 bg-gradient-to-l from-transparent to-gray-700"></div>
+        </div>
+
+        <!-- The Grid -->
+        <div id="team-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
+            <!-- Team cards will be injected here by JS -->
+        </div>
+
+
+    </main>
+
+    <footer class="text-center py-8 text-gray-600 text-sm border-t border-white/5">
+        <p>&copy; 2025 Sleep Sync. All rights reserved.</p>
+    </footer>
+
+    <!-- Contact Modal (Hidden by default) -->
+    <div id="contact-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-card p-8 rounded-2xl max-w-md w-full mx-4 text-center transform scale-95 transition-transform duration-300" id="contact-content">
+            <div class="w-16 h-16 rounded-full bg-brand-accent/20 flex items-center justify-center mx-auto mb-6">
+                <i class="ph-bold ph-chat-centered-text text-brand-accent text-3xl"></i>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-2">Get in Touch</h3>
+            <p class="text-gray-400 mb-8 text-sm">We'd love to hear from you. Reach out to us via email or phone.</p>
+            
+            <div class="space-y-4 text-left">
+                <div class="bg-white/5 p-4 rounded-xl flex items-center gap-4 hover:bg-white/10 transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-brand-blueGlow/20 flex items-center justify-center shrink-0">
+                        <i class="ph-bold ph-envelope text-brand-blueGlow text-xl"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">Email</p>
+                        <p class="text-white font-medium truncate select-all">alvinbautista564@gmail.com</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 p-4 rounded-xl flex items-center gap-4 hover:bg-white/10 transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-brand-accent/20 flex items-center justify-center shrink-0">
+                        <i class="ph-bold ph-phone text-brand-accent text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">Phone</p>
+                        <p class="text-white font-medium select-all">+63 976 151 0800</p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="close-modal" class="mt-8 w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white font-medium transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // CONFIGURATION: Customize team info here
+        const teamMembers = [
+            { id: 1, name: "Alvin Bautista", role: "Lead Researcher and Web Developer", file: "images/team1.jpg" },
+            { id: 2, name: "Jeremy Barrera", role: "Lead Researcher and Web Developer", file: "images/team2.jpg" },
+            { id: 3, name: "Caleb Clemente", role: "Lead Researcher", file: "images/team3.jpg" },
+            { id: 4, name: "Carlos Lee", role: "Lead Researcher", file: "images/team4.jpg" },
+            { id: 5, name: "Glen Esteban", role: "Assistant Researcher", file: "images/team5.jpg" },
+            { id: 6, name: "Ray Caringal", role: "Assistant Researcher", file: "images/team6.jpg" },
+            { id: 7, name: "Andrei Nyl Manliclic", role: "Assistant Researcher", file: "images/team7.jpg" }
+        ];
+
+        const gridContainer = document.getElementById('team-grid');
+
+        // Function to create a card
+        function createTeamCard(member, index) {
+            // Generate initials for fallback
+            const initials = member.name.split(' ').map(n => n[0]).join('');
+            
+            // Stagger animation delay
+            const delay = 0.2 + (index * 0.1);
+
+            // 3. REMOVED Description and Social Links
+            const cardHTML = `
+                <div class="glass-card rounded-2xl p-6 flex flex-col items-center text-center group relative overflow-hidden animate-fade-in-up" style="animation-delay: ${delay}s">
+                    
+                    <!-- Glow effect on hover -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <!-- Image Container -->
+                    <div class="relative w-32 h-32 mb-5 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-brand-accent">
+                        <div class="w-full h-full rounded-full bg-brand-card overflow-hidden relative">
+                            <!-- Image with Fallback Logic -->
+                            <img 
+                                src="${member.file}" 
+                                alt="${member.name}"
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center bg-brand-card text-2xl font-bold text-gray-500\'>${initials}</div>';"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Text Content -->
+                    <div class="relative z-10 pb-2">
+                        <h3 class="text-xl font-bold text-white mb-1 group-hover:text-brand-accent transition-colors">${member.name}</h3>
+                        <p class="text-sm text-blue-400 font-medium">${member.role}</p>
+                    </div>
+                </div>
+            `;
+            return cardHTML;
+        }
+
+        // Render the grid
+        gridContainer.innerHTML = teamMembers.map((member, index) => createTeamCard(member, index)).join('');
+
+        // MODAL LOGIC
+        const contactBtn = document.getElementById('contact-btn');
+        const modal = document.getElementById('contact-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalContent = document.getElementById('contact-content');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before changing opacity for transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        contactBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Close when clicking outside the box
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+    </script>
+</body>
+</html>

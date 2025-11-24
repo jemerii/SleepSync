@@ -1,0 +1,196 @@
+body {
+margin: 0;
+font-family: Arial, sans-serif;
+background: linear-gradient(135deg, #a445f5, #3b1ebd);
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.container {
+width: 900px;
+height: 500px;
+background: #0f0f2d;
+border-radius: 20px;
+display: flex;
+overflow: hidden;
+box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Left Login Panel */
+.left {
+width: 40%;
+padding: 50px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+color: white;
+background: rgba(0, 0, 0, 0.2);
+}
+
+.avatar {
+width: 90px;
+height: 90px;
+border: 2px solid #7f7fff;
+border-radius: 50%;
+margin-bottom: 30px;
+}
+
+input {
+width: 300px;
+padding: 12px;
+margin: 10px 0;
+border-radius: 25px;
+border: none;
+background: #1c1c3b;
+color: white;
+margin-left: 1%;
+}
+
+.login-btn {
+width: 200px;
+padding-top: 14px;
+padding-bottom: 14px;
+padding-left: 5px;
+padding-right: 5px;
+border: none;
+margin-top: 10px;
+border-radius: 25px;
+background: #ff0f8a;
+color: white;
+cursor: pointer;
+font-weight: bold;
+margin-left: 19%;
+}
+
+.remember {
+margin-top: 10px;
+font-size: 14px;
+}
+
+/* Right Side */
+.right {
+width: 60%;
+position: relative;
+color: white;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+padding: 40px;
+}
+
+.wave {
+position: absolute;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at center, rgba(150, 0, 255, 0.6), transparent 60%),
+radial-gradient(circle at 70% 40%, rgba(0, 180, 255, 0.5), transparent 70%);
+filter: blur(40px);
+}
+
+.welcome {
+position: relative;
+font-size: 48px;
+font-weight: bold;
+text-align: center;
+}
+
+.subtext {
+position: relative;
+margin-top: 10px;
+}
+
+body {
+font-weight: bold;
+}
+
+.remember {
+margin-top: 10px;
+font-size: 14px;
+text-align: center;
+}
+
+/* Right Side */
+.right {
+width: 60%;
+position: relative;
+color: white;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+padding: 40px;
+}
+
+.wave {
+position: absolute;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at center, rgba(150, 0, 255, 0.6), transparent 60%),
+radial-gradient(circle at 70% 40%, rgba(0, 180, 255, 0.5), transparent 70%);
+filter: blur(40px);
+}
+
+.welcome {
+position: relative;
+font-size: 48px;
+font-weight: bold;
+}
+
+.subtext {
+position: relative;
+margin-top: 10px;
+width: 70%;
+opacity: 0.7;
+text-align: center;
+justify-content: center;
+}
+
+@media (max-width: 412px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+        height: auto;
+    }
+
+    .left, .right {
+        width: 100%;
+        padding: 30px;
+        height: auto;
+    }
+
+    .welcome {
+        font-size: 20px;
+         margin-left: -17%;
+        letter-spacing: 15%;
+    }
+
+    .subtext {
+        width: 90%;
+        font-size: 14px;
+        margin-left: -15%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .remember {
+        margin-left: -16%;
+    }
+
+    input {
+        width: 279px;
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .login-btn{
+        width: 200px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: 15%;
+    }
+}

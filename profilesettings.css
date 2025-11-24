@@ -1,0 +1,277 @@
+:root {
+    /* Existing Variables */
+    --primary-pink: #ff0055; 
+    --bg-gradient-start: #050511;
+    --bg-gradient-end: #181038;
+    --card-bg: rgba(30, 30, 60, 0.6); /* Translucent card background */
+    --text-main: #ffffff;
+    --text-muted: #a0a0b0; /* For input labels/placeholders, etc. */
+    --input-bg: rgba(0, 0, 0, 0.3); /* Translucent input background */
+    --border-color: rgba(255, 255, 255, 0.1); /* Card border */
+
+    /* NEW VARIABLES ADDED to fix the Back Button styling */
+    --accent-color: var(--primary-pink); /* Use the pink as the accent color */
+    --glow: rgba(255, 0, 85, 0.8); /* A brighter version of the pink for glow effects */
+}
+
+/* Global Reset/Base Styles */
+* {
+    box-sizing: border-box;
+    /* Adopting the 'Segoe UI' or similar modern sans-serif. Keeping 'Poppins' for now if it's the required font, but adding fallbacks. */
+    font-family: "Poppins", sans-serif;
+}
+
+body{
+    margin: 0;
+    /* 1. Change Background to Gradient */
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    color: var(--text-main);
+    overflow-x: hidden;
+    min-height: 100vh; /* Ensure gradient covers full page */
+}
+
+.container {
+    padding: 80px 10%;
+    /* Max width from the second design can be adopted for better control */
+    max-width: 1400px; 
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.profile-wrapper {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+/* 2. Update Card Style to Glassmorphism */
+.profile-card {
+    background: var(--card-bg); /* Translucent background */
+    padding: 35px;
+    border-radius: 16px; /* Slightly reduced border-radius */
+    /* Remove old box-shadow for cleaner look */
+    /* box-shadow: 0 0 20px rgba(255, 0, 128, 0.1); */
+    border: 1px solid var(--border-color); /* Add a light border */
+    backdrop-filter: blur(12px); /* Add blur effect */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* New glassmorphism shadow */
+    flex: 1;
+    min-width: 300px;
+}
+
+/* H2 elements in the Profile Settings are titles like "Profile Picture", "Account Information" */
+.profile-card h2 {
+    margin-top: 0;
+    /* Apply style for card headings (similar to second image's h2) */
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+/* Avatar Section */
+.avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 15px 0 20px;
+    /* Keep the border but update color to match design system if needed. Keeping original white tone as it works well. */
+    border: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 3. Update Button Color/Style */
+.upload-btn {
+    display: inline-block;
+    background: var(--primary-pink); /* Use the new primary pink */
+    padding: 12px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    margin-top: 10px;
+    /* Add subtle lift effect for consistency */
+    box-shadow: 0 4px 10px rgba(255, 0, 85, 0.4); 
+}
+
+.upload-btn input {
+    display: none;
+}
+
+.upload-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px); /* Add subtle hover animation */
+}
+
+/* 4. Update Input Fields Style */
+.user-details input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px; /* Slightly reduced border-radius for inputs */
+    border: 1px solid rgba(255,255,255,0.2); /* Light border */
+    background: var(--input-bg); /* Translucent background */
+    color: white;
+    outline: none; /* Remove default focus outline */
+    transition: 0.3s;
+}
+
+.user-details input:focus {
+    border-color: #6a11cb; /* Focus border color from second image's style */
+}
+
+/* Placeholder Text Color (optional but good for dark theme) */
+.user-details input::placeholder {
+    color: var(--text-muted); 
+    opacity: 0.8; 
+}
+
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* Note: Custom styling for the actual checkbox element is often needed 
+   to match a specific design, but keeping the default for now to avoid
+   breaking functionality, focusing on major style changes. */
+.checkbox-row input[type="checkbox"] {
+    /* Resetting input styles if they interfere with checkbox appearance */
+    width: auto;
+    padding: 0;
+    margin: 0;
+    border-radius: 4px;
+    background: var(--input-bg);
+}
+
+
+/* 5. Update Save Button Style */
+.save-btn {
+    margin-top: 40px;
+    background: var(--primary-pink); /* Use the new primary pink */
+    padding: 15px 40px;
+    border-radius: 40px;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold; /* Added bold to match second image's buttons */
+    cursor: pointer;
+    transition: 0.25s;
+    /* Add subtle lift effect for consistency */
+    box-shadow: 0 4px 10px rgba(255, 0, 85, 0.4); 
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9; /* Slightly less aggressive opacity change on hover */
+}
+
+.privacy-settings {
+    margin-top: 40px;
+}
+
+/* --- FLOATING BACK BUTTON --- */
+#back-button {
+    /* Position fixed to float on the page */
+    position: fixed;
+    top: 30px; /* Distance from the top of the viewport */
+    left: 5%; /* Distance from the left side (matching your padding) */
+    
+    /* Styling to match the dark/neon theme */
+    background: rgba(255, 0, 128, 0.1); /* Subtle background using accent color */
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    
+    /* Padding and shape */
+    padding: 10px 20px;
+    border-radius: 50px;
+    /* FIX: Using defined variables */
+    border: 1px solid var(--accent-color); /* Neon border */
+    
+    /* Subtle shadow/glow */
+    box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+    
+    /* Ensures it stays above all other content */
+    z-index: 999; 
+    
+    /* Transition for a smooth hover effect */
+    transition: all 0.3s ease;
+}
+
+#back-button:hover {
+    background: var(--accent-color); /* Solid accent color on hover */
+    transform: translateY(-2px); /* Lift effect */
+    /* FIX: Using defined variables */
+    box-shadow: 0 0 20px var(--glow); /* Brighter glow */
+}
+
+/* Style for the arrow character */
+#back-button .arrow {
+    margin-right: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1; /* Ensure vertical alignment */
+}
+
+/* Media Query (keeping the original rules for layout stability) */
+@media (max-width: 480px) {
+    /* 1. Reset/Simplify Layout Containers */
+    .container {
+        padding: 40px 5%; /* Reduced padding for more screen space */
+        width: auto;
+    }
+
+    .profile-wrapper {
+        flex-direction: column; 
+        width: 100%; 
+        gap: 20px;
+    }
+
+    /* 2. Style all Cards for full width and reduced padding */
+    .profile-card {
+        flex: 0 1 100%; 
+        max-width: 100%; 
+        min-width: 0; 
+        padding: 25px;
+    }
+
+    /* 3. FIX: Target the FIRST card (Profile Picture) and force its contents to center */
+    .profile-wrapper .profile-card:first-child { 
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        text-align: center; 
+    }
+
+    /* 4. AVATAR & BUTTON FIXES: Use auto margins for reliable centering */
+    .avatar {
+        width: 140px; 
+        height: 140px;
+        margin: 15px auto 20px; 
+    }
+
+    .upload-btn {
+        margin-top: 10px;
+    }
+
+    /* 5. Save button is centered */
+    .save-btn {
+        display: block; 
+        margin: 40px auto 0; 
+    }
+}

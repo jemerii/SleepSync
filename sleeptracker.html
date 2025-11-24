@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Sync | Sleep Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff0055; 
+            --bg-gradient-start: #050511;
+            --bg-gradient-end: #181038;
+            --card-bg: rgba(30, 30, 60, 0.6);
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --good-sleep: #4caf50;
+            --bad-sleep: #f44336;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; }
+
+        header.page-header { margin-bottom: 30px; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        p.subtitle { color: var(--text-muted); max-width: 600px; line-height: 1.5; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+
+        /* General Card Styling */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); }
+        
+        input[type="time"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--input-bg);
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: #6a11cb; }
+
+        /* Button Styles */
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-pink);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            margin-top: 15px;
+            color: var(--text-muted);
+        }
+        .btn-reset:hover { border-color: var(--primary-pink); color: var(--primary-pink); }
+        
+        .btn-sync-wearable {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #4a4e69; 
+            border-radius: 8px;
+            background-color: rgba(74, 78, 105, 0.1); 
+            color: #7d84a3;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transition: none; 
+            pointer-events: none;
+        }
+
+        /* Stats */
+        .stats-row { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+        .stat-card { 
+            background: rgba(0,0,0,0.2); 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center; 
+        }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: var(--primary-pink); margin: 5px 0; }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .stat-badge-good { color: var(--good-sleep); }
+        .stat-badge-bad { color: var(--bad-sleep); }
+
+        /* Chart */
+        .chart-container { position: relative; height: 300px; width: 100%; }
+
+/* --- FLOATING BACK BUTTON --- */
+#back-button {
+    /* Position fixed to float on the page */
+    position: fixed;
+    top: 30px; /* Distance from the top of the viewport */
+    left: 5%; /* Distance from the left side (matching your padding) */
+    
+    /* Styling to match the dark/neon theme */
+    background: rgba(255, 0, 128, 0.1); /* Subtle background using accent color */
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    
+    /* Padding and shape */
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid var(--accent-color); /* Neon border */
+    
+    /* Subtle shadow/glow */
+    box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+    
+    /* Ensures it stays above all other content */
+    z-index: 999; 
+    
+    /* Transition for a smooth hover effect */
+    transition: all 0.3s ease;
+}
+
+#back-button:hover {
+    background: var(--accent-color); /* Solid accent color on hover */
+    transform: translateY(-2px); /* Lift effect */
+    box-shadow: 0 0 20px var(--glow); /* Brighter glow */
+}
+
+/* Style for the arrow character */
+#back-button .arrow {
+    margin-right: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1; /* Ensure vertical alignment */
+}
+        
+        #feedback {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(106, 17, 203, 0.2);
+            border-radius: 8px;
+            border: 1px solid #6a11cb;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#" id="back-button" onclick="history.back(); return false;">
+    <span class="arrow">←</span> Back
+</a>
+
+    <div class="container">
+        <header class="page-header">
+            <h1> Sleep Tracker Dashboard </h1>
+            <p class="subtitle">Monitor your actual sleep duration, quality, and consistency over time.</p>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <section class="card">
+                <h2>Log Sleep Session</h2>
+                <form id="sleepForm">
+                    <div class="form-group">
+                        <label for="sleepDate">Date</label>
+                        <input type="date" id="sleepDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bedTime">Time Went to Bed</label>
+                        <input type="time" id="bedTime" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wakeTime">Time Woke Up</label>
+                        <input type="time" id="wakeTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quality">Self-Rated Quality (1=Tired, 5=Refreshed)</label>
+                        <select id="quality">
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Average</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Calculate & Log Sleep</button>
+
+                    <button type="button" class="btn-sync-wearable" disabled>
+                        Sync Wearable Data (Coming Soon)
+                    </button>
+                    
+                    <div id="feedback"></div>
+
+                    <button type="button" class="btn-primary btn-reset" onclick="resetData()">Clear All Data</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Sleep Health Summary</h2>
+                
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgDuration">0h 00m</div>
+                        <div class="stat-label">Avg Sleep Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="calcQuality">0</div>
+                        <div class="stat-label">Avg Calc. Score (out of 100)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="consistencyBadge">Low</div>
+                        <div class="stat-label">Consistency Score</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="durationChart"></canvas>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Initialize Data ---
+        let sleepData = JSON.parse(localStorage.getItem('sleepSyncSleepData')) || [
+            // Added calcScore field to dummy data
+            { date: '2023-10-15', bed: '23:30', wake: '07:30', durationMins: 480, quality: 4, calcScore: 88 },
+            { date: '2023-10-16', bed: '01:00', wake: '08:00', durationMins: 420, quality: 3, calcScore: 69 },
+            { date: '2023-10-17', bed: '22:45', wake: '06:15', durationMins: 450, quality: 5, calcScore: 95 }
+        ];
+
+        document.getElementById('sleepDate').valueAsDate = new Date();
+
+        // --- 2. Setup Chart ---
+        const ctx = document.getElementById('durationChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [], 
+                datasets: [{
+                    label: 'Duration (Hours)',
+                    data: [],
+                    backgroundColor: 'rgba(37, 117, 252, 0.6)', 
+                    borderColor: '#2575fc',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: 'white' } } },
+                scales: {
+                    x: { ticks: { color: '#a0a0b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { 
+                        min: 0, max: 10,
+                        ticks: { color: '#a0a0b0', callback: function(value) { return value + 'h'; } }, 
+                        title: { display: true, text: 'Sleep Duration', color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            }
+        });
+
+        // --- Helper Functions ---
+
+        // 1. Duration calculation (handles overnight)
+        function calculateDurationMinutes(bedTimeStr, wakeTimeStr) {
+            let [bedH, bedM] = bedTimeStr.split(':').map(Number);
+            let [wakeH, wakeM] = wakeTimeStr.split(':').map(Number);
+
+            let bedTotalMins = bedH * 60 + bedM;
+            let wakeTotalMins = wakeH * 60 + wakeM;
+
+            let duration = wakeTotalMins - bedTotalMins;
+
+            if (duration < 0) {
+                duration += (24 * 60);
+            }
+            return duration;
+        }
+
+        // 2. Automated Sleep Quality Score (out of 100)
+        function calculateSleepQualityScore(durationMins, selfRating) {
+            const durationHours = durationMins / 60;
+            const targetHours = 8.0; 
+            
+            // 60% Weight on Objective Duration
+            let durationScore;
+            const diff = Math.abs(durationHours - targetHours);
+
+            if (diff <= 1.0) { // Near target (7-9 hours)
+                durationScore = 60;
+            } else if (diff <= 2.0) { // Moderate difference (6-7h or 9-10h)
+                durationScore = 40;
+            } else { // High difference (<6h or >10h)
+                durationScore = 20;
+            }
+
+            // Penalty for being far from target
+            durationScore = Math.max(0, durationScore - (diff * 5)); 
+
+            // 40% Weight on Subjective Rating (1-5 scaled to 0-40)
+            const ratingScore = ((selfRating - 1) / 4) * 40; 
+            
+            let finalScore = durationScore + ratingScore;
+
+            // Clamp and round final score (max 100)
+            return Math.min(100, Math.round(finalScore));
+        }
+
+        // 3. Format minutes into Hh Mm
+        function formatDuration(minutes) {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            return `${h}h ${m}m`;
+        }
+
+
+        // --- UI Updates ---
+
+        function updateUI() {
+            sleepData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const labels = sleepData.map(d => d.date.substring(5));
+            const durationHours = sleepData.map(d => d.durationMins / 60); 
+            const calcScores = sleepData.map(d => d.calcScore);
+
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = durationHours;
+            chart.update();
+
+            if (sleepData.length > 0) {
+                // Avg Duration
+                const totalMins = durationHours.reduce((a, b) => a + b, 0) * 60;
+                const avgMins = totalMins / sleepData.length;
+                document.getElementById('avgDuration').innerText = formatDuration(Math.round(avgMins));
+
+                // Avg Calculated Score
+                const totalCalcScore = calcScores.reduce((a, b) => a + b, 0);
+                document.getElementById('calcQuality').innerText = Math.round(totalCalcScore / sleepData.length);
+
+                // Consistency (calculated on durationHours)
+                const mean = durationHours.reduce((a, b) => a + b, 0) / durationHours.length;
+                const variance = durationHours.map(d => (d - mean) ** 2).reduce((a, b) => a + b, 0) / durationHours.length;
+                const stdDev = Math.sqrt(variance);
+
+                const badgeEl = document.getElementById('consistencyBadge');
+                let consistencyText;
+                if (stdDev < 0.5) {
+                    consistencyText = 'High';
+                    badgeEl.className = 'stat-value stat-badge-good';
+                } else if (stdDev < 1.0) {
+                    consistencyText = 'Medium';
+                    badgeEl.className = 'stat-value';
+                } else {
+                    consistencyText = 'Low';
+                    badgeEl.className = 'stat-value stat-badge-bad';
+                }
+                badgeEl.innerText = consistencyText;
+
+            } else {
+                document.getElementById('avgDuration').innerText = '0h 0m';
+                document.getElementById('calcQuality').innerText = '0';
+                document.getElementById('consistencyBadge').innerText = 'N/A';
+                document.getElementById('consistencyBadge').className = 'stat-value';
+            }
+
+            localStorage.setItem('sleepSyncSleepData', JSON.stringify(sleepData));
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const date = document.getElementById('sleepDate').value;
+            const bedTime = document.getElementById('bedTime').value;
+            const wakeTime = document.getElementById('wakeTime').value;
+            const quality = parseInt(document.getElementById('quality').value);
+
+            if (!date || !bedTime || !wakeTime) {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            const durationMins = calculateDurationMinutes(bedTime, wakeTime);
+
+            if (durationMins < 60 || durationMins > 720) {
+                 if (!confirm("Your logged sleep duration is unusual (" + formatDuration(durationMins) + "). Are you sure you want to save this?")) {
+                    return;
+                }
+            }
+
+            // 1. Calculate the final score (The new step)
+            const calculatedScore = calculateSleepQualityScore(durationMins, quality);
+
+            // 2. Add new entry
+            sleepData.push({ date, bed: bedTime, wake: wakeTime, durationMins, quality, calcScore: calculatedScore });
+            updateUI();
+            
+            // 3. Show Feedback
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.innerHTML = `<strong>Log Saved!</strong><br>Duration: ${formatDuration(durationMins)}<br>Calculated Quality Score: <strong style="color: #2575fc; font-size: 1.2em;">${calculatedScore} / 100</strong>`;
+        }
+
+        function resetData() {
+            if(confirm("Clear all sleep history?")) {
+                sleepData = [];
+                localStorage.removeItem('sleepSyncSleepData');
+                document.getElementById('feedback').style.display = 'none';
+                updateUI();
+            }
+        }
+
+        // --- 4. Event Listeners ---
+        document.getElementById('sleepForm').addEventListener('submit', handleFormSubmit);
+
+        // Initial Load
+        updateUI();
+
+    </script>
+</body>
+</html>

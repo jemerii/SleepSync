@@ -1,0 +1,285 @@
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #1a1a2e;
+    color: white;
+    /* Define CSS variables for easier color reference */
+    --primary-color: #1a1a2e;
+    --secondary-color: #0d0d1d;
+    --accent-color: #ff0080;
+    --glow: rgba(255, 0, 128, 0.7);
+}
+
+/* --- HERO SECTION --- (Kept as is based on your provided code) */
+.hero {
+    /* Use 100vh for full viewport height */
+    height: 100vh;
+    /* Keeps existing radial gradient but adjusts position for a smoother look */
+    background: radial-gradient(circle at 75% 50%, #1e2a78, #0d0d1d 80%);
+    /* Centers content on screen */
+    display: flex;
+    /* Changed to center the text content horizontally */
+    justify-content: center; 
+    align-items: center; 
+    padding: 0 10%;
+    position: relative; 
+    overflow: hidden; 
+    text-align: left; /* Default text alignment */
+}
+
+/* Text container (Left/Center side) */
+.hero-text {
+    max-width: 550px; /* Adjusted max-width for prominence */
+    z-index: 2; 
+    /* NEW: Positioned absolutely and slightly to the left for the new layout */
+    position: absolute;
+    left: 10%; 
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* NEW: Styling for the large "SYNC" or "SLEEP SYNC" graphic */
+#text-img {
+    /* Make the text image much larger and the main focus */
+    width: 350px; 
+    display: block; /* Make it a block element for better spacing */
+    margin-bottom: 5px; /* Space below the logo/text */
+}
+
+#HomeHeading {
+    /* Smaller text above the main logo text */
+    font-size: 1.5rem; 
+    margin: 0;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+#HomeSubheading {
+    /* Subheading text below the main logo text */
+    /* NEW: Use the "wiggly" script font as the primary font */
+    font-family: 'Sacramento', cursive; 
+    
+    /* NEW: Set it to italic */
+    font-style: italic; 
+    
+    /* Increased size for better readability of the script font */
+    font-size: 1.5rem; 
+    
+    /* Increase opacity to make it pop */
+    opacity: 0.6; 
+    
+    margin-top: 10px; 
+    margin-bottom: 30px;
+    line-height: 1.2; 
+    text-align: left;
+    
+    /* Removed letter-spacing and font-weight as they conflict with script fonts */
+    
+    /* Optional: Add a subtle text shadow (neon glow) to match the hero image */
+    text-shadow: 0 0 5px rgba(255, 0, 128, 0.5);
+}
+
+/* CTA Button - kept as is */
+.cta-btn {
+    background: var(--accent-color);
+    padding: 15px 35px;
+    border-radius: 40px;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+}
+
+/* --- HERO IMAGE (BED ILLUSTRATION) --- */
+.hero-img-container {
+    /* Position absolutely to place it precisely on the right */
+    position: absolute;
+    right: 5%; /* Adjusted for a closer look to the image */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 650px; /* Slightly larger image container */
+    height: 650px; 
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styles for the actual bed image */
+#symbol-img {
+    width: 100%; 
+    height: 100%;
+    object-fit: contain;
+    /* Retained filter for the neon glow effect */
+    filter: drop-shadow(0 0 20px rgba(255, 0, 128, 0.6)) drop-shadow(0 0 20px rgba(30, 42, 120, 0.9));
+    opacity: 0.9; /* Slightly brighter */
+}
+
+/* --- GRID OF FEATURES: ENHANCEMENTS START HERE --- */
+.sections {
+    padding: 80px 10%;
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    background: var(--secondary-color);
+}
+
+.card {
+    background: #111226;
+    padding: 35px;
+    /* Increased border-radius for a softer, modern look */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    /* Added a subtle gradient border using the accent color */
+    border: 2px solid transparent; 
+    background-clip: padding-box;
+    position: relative;
+    transition: all 0.3s ease;
+    /* REDUCED PADDING: Padding-top is reduced from 70px back to 35px */
+    padding-top: 35px;
+}
+
+/* Gradient Border Effect */
+.card::before {
+    content: '';
+    position: absolute;
+    top: -2px; right: -2px; bottom: -2px; left: -2px;
+    z-index: -1;
+    /* Creating a subtle neon glow border */
+    background: linear-gradient(135deg, #1e2a78, var(--accent-color) 70%, #1e2a78);
+    border-radius: 14px;
+    opacity: 0.3; /* Subtle glow */
+    transition: opacity 0.3s ease;
+}
+
+.card a {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+    height: 100%; 
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 40px rgba(255, 0, 128, 0.3);
+}
+
+/* Brighter glow on hover */
+.card:hover::before {
+    opacity: 0.6;
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    /* Add a subtle line under the header */
+    padding-bottom: 5px;
+    border-bottom: 5px solid rgba(255, 0, 128, 0.3);
+    margin-bottom: 15px;
+}
+
+/* ... (rest of your CSS code remains unchanged) ... */
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    background: #090a14;
+    opacity: 0.6;
+    font-size: 0.9rem;
+}
+
+/* --- HEADER / ABOUT US BUTTON --- - Kept as is */
+.main-header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 20px 5%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end; 
+    z-index: 100; 
+}
+
+.about-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.about-btn:hover {
+    background: var(--accent-color); 
+    border-color: var(--accent-color);
+    transform: scale(1.1) rotate(10deg); 
+    box-shadow: 0 0 15px var(--glow);
+}
+
+/* Tooltip text - Kept as is */
+.about-btn::before {
+    content: "About Us";
+    position: absolute;
+    right: 60px;
+    background: rgba(0,0,0,0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.about-btn:hover::before {
+    opacity: 1;
+    transform: translateX(-5px);
+}
+
+/* --- MEDIA QUERY (MOBILE) --- */
+@media (max-width: 1100px) {
+    /* Hide the image sooner to give the text space */
+    .hero-img-container {
+        display: none; /* Hide the image container completely */
+    }
+    
+    .hero-text {
+        /* Center text when image is hidden */
+        position: static;
+        transform: none;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    #HomeHeading, #HomeSubheading {
+        text-align: center; 
+    }
+
+    #text-img {
+        /* Center the text image when the hero-text is centered */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 412px) {
+    /* Kept as is, but adjusted for new centering */
+    #HomeSubheading {
+        padding-right: 0;
+    }
+}

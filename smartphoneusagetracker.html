@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Sync | Smartphone Usage Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="smartphoneusagetracker.css">
+</head>
+<body>
+
+<a href="#" id="back-button" onclick="history.back(); return false;">
+    <span class="arrow">←</span> Back
+</a>
+
+    <div class="container">
+        <header class="page-header">
+            <h1>Smartphone Usage Tracker</h1>
+            <p class="subtitle">Log your screen time. Our algorithm will estimate your sleep quality based on usage patterns.</p>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <section class="card">
+                <h2>Log Activity</h2>
+                <form id="usageForm">
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hours">Screen Time (Hours)</label>
+                        <input type="number" id="hours" placeholder="e.g., 5.5" step="0.1" min="0" max="24" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="app">Most Used Category</label>
+                        <select id="app">
+                            <option value="Social">Social Media</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Productivity">Productivity</option>
+                            <option value="Entertainment">Entertainment</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Calculate & Save</button>
+                    
+                    <div id="calculationFeedback"></div>
+
+                    <button type="button" class="btn-primary btn-reset" onclick="resetData()">Clear All Data</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Usage Analytics</h2>
+                
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgUsage">0h</div>
+                        <div class="stat-label">Avg Daily Usage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="topCategory">-</div>
+                        <div class="stat-label">Top Category</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgSleepScore">0</div>
+                        <div class="stat-label">Avg Sleep Score</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="correlationChart"></canvas>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Initialize Data ---
+        // Using dummy data that shows the correlation (High hours = Low sleep)
+        let trackerData = JSON.parse(localStorage.getItem('sleepSyncData')) || [
+            { date: '2023-10-01', hours: 4.0, sleep: 85, category: 'Productivity' },
+            { date: '2023-10-02', hours: 5.5, sleep: 72, category: 'Social' },
+            { date: '2023-10-03', hours: 7.0, sleep: 60, category: 'Gaming' },
+            { date: '2023-10-04', hours: 2.5, sleep: 92, category: 'Productivity' },
+            { date: '2023-10-05', hours: 8.0, sleep: 50, category: 'Entertainment' }
+        ];
+
+        document.getElementById('date').valueAsDate = new Date();
+
+        // --- 2. Setup Chart ---
+        const ctx = document.getElementById('correlationChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Screen Time (Hours)',
+                        data: [],
+                        borderColor: '#ff0055',
+                        backgroundColor: 'rgba(255, 0, 85, 0.2)',
+                        yAxisID: 'y',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Calc. Sleep Score',
+                        data: [],
+                        borderColor: '#2575fc',
+                        backgroundColor: 'rgba(37, 117, 252, 0.1)',
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        fill: false,
+                        borderDash: [5, 5] // Dashed line to indicate it's calculated
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: 'white' } } },
+                scales: {
+                    x: { ticks: { color: '#a0a0b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { 
+                        type: 'linear', display: true, position: 'left', 
+                        ticks: { color: '#ff0055' }, title: { display: true, text: 'Hours', color: '#ff0055' }
+                    },
+                    y1: { 
+                        type: 'linear', display: true, position: 'right', min: 0, max: 100,
+                        ticks: { color: '#2575fc' }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Score', color: '#2575fc' }
+                    }
+                }
+            }
+        });
+
+        // --- 3. Core Logic Functions ---
+
+        // THE ALGORITHM: Calculates Sleep Score based on usage
+        function calculateSleepScore(hours, category) {
+            let baseScore = 100; // Perfect sleep
+            
+            // Base penalty: 7 points per hour of screen time
+            let penaltyFactor = 7; 
+
+            // Contextual penalty: Gaming and Social strain eyes/brain more than Reading/Productivity
+            if (category === 'Gaming' || category === 'Social') {
+                penaltyFactor = 9; // Harsher penalty
+            } else if (category === 'Productivity') {
+                penaltyFactor = 5; // Lighter penalty
+            }
+
+            let calculatedScore = baseScore - (hours * penaltyFactor);
+
+            // Clamp score between 0 and 100
+            return Math.max(0, Math.min(100, Math.round(calculatedScore)));
+        }
+
+        function updateUI() {
+            // Sort by date
+            trackerData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const labels = trackerData.map(d => d.date.substring(5)); // Show MM-DD
+            const usageData = trackerData.map(d => d.hours);
+            const sleepData = trackerData.map(d => d.sleep);
+
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = usageData;
+            chart.data.datasets[1].data = sleepData;
+            chart.update();
+
+            if (trackerData.length > 0) {
+                // Avg Usage
+                const totalHours = usageData.reduce((a, b) => a + b, 0);
+                document.getElementById('avgUsage').innerText = (totalHours / trackerData.length).toFixed(1) + 'h';
+
+                // Avg Sleep Score
+                const totalSleep = sleepData.reduce((a, b) => a + b, 0);
+                document.getElementById('avgSleepScore').innerText = Math.round(totalSleep / trackerData.length);
+
+                // Top Category
+                const categories = trackerData.map(d => d.category);
+                const mode = categories.sort((a,b) =>
+                      categories.filter(v => v===a).length
+                    - categories.filter(v => v===b).length
+                ).pop();
+                document.getElementById('topCategory').innerText = mode;
+            } else {
+                document.getElementById('avgUsage').innerText = '0h';
+                document.getElementById('avgSleepScore').innerText = '0';
+                document.getElementById('topCategory').innerText = '-';
+            }
+
+            localStorage.setItem('sleepSyncData', JSON.stringify(trackerData));
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const date = document.getElementById('date').value;
+            const hours = parseFloat(document.getElementById('hours').value);
+            const category = document.getElementById('app').value;
+
+            if (!date || isNaN(hours)) {
+                alert("Please enter valid data.");
+                return;
+            }
+
+            // 1. Run the Algorithm
+            const calculatedSleep = calculateSleepScore(hours, category);
+
+            // 2. Save Data
+            trackerData.push({ date, hours, sleep: calculatedSleep, category });
+            updateUI();
+
+            // 3. Show Feedback
+            const feedback = document.getElementById('calculationFeedback');
+            feedback.style.display = 'block';
+            feedback.innerHTML = `<strong>Log Saved!</strong><br> based on ${hours}h of ${category},<br> we estimated a Sleep Score of <strong style="color: #2575fc; font-size: 1.2em;">${calculatedSleep}</strong>`;
+            
+            // Clear input
+            document.getElementById('hours').value = '';
+        }
+
+        function resetData() {
+            if(confirm("Clear all history?")) {
+                trackerData = [];
+                localStorage.removeItem('sleepSyncData');
+                document.getElementById('calculationFeedback').style.display = 'none';
+                updateUI();
+            }
+        }
+
+        document.getElementById('usageForm').addEventListener('submit', handleFormSubmit);
+        updateUI();
+
+    </script>
+</body>
+</html>

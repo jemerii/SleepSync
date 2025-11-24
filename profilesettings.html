@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sleep Sync | Profile Settings</title>
+<link rel="stylesheet" href="profilesettings.css">
+<script src="profilesettings.js" defer></script>
+</head>
+
+<body>
+
+<a href="#" id="back-button" onclick="history.back(); return false;">
+    <span class="arrow">←</span> Back
+</a>
+
+
+<div class="container">
+
+    <h1 class="page-title">Profile Settings</h1>
+
+    <div class="profile-wrapper">
+
+        <div class="profile-card profile-picture">
+            <h2 class="profile-picture-txt">Profile Picture</h2>
+            <div class="avatar" style="width: 160px !important; height: 160px !important; border-radius: 50% !important; overflow: hidden !important;">
+                <img 
+                    id="avatarPreview" 
+                    src="Images/image_4504a2.png" 
+                    alt="Profile Picture" 
+                    style="
+                        width: 100% !important; 
+                        height: 100% !important; 
+                        object-fit: cover !important; 
+                        display: block !important;
+                    "
+                >
+            </div>
+
+            <label class="upload-btn">
+                Upload New Photo
+                <input type="file" id="avatarInput" accept="image/*">
+            </label>
+        </div>
+
+        <div class="profile-card user-details">
+            <h2>Account Information</h2>
+
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter your name">
+
+            <label>Email</label>
+            <input type="email" placeholder="Enter your email">
+
+            <label>Password</label>
+            <input type="password" placeholder="Enter new password">
+
+            <label>Confirm Password</label>
+            <input type="password" placeholder="Confirm password">
+        </div>
+
+    </div>
+
+    <div class="profile-card privacy-settings">
+        <h2>Privacy Settings</h2>
+
+        <label class="checkbox-row">
+            <input type="checkbox"> Allow data syncing across devices
+        </label>
+
+        <label class="checkbox-row">
+            <input type="checkbox"> Enable sleep & study reminders
+        </label>
+
+        <label class="checkbox-row">
+            <input type="checkbox"> Make profile visible in connected networks
+        </label>
+    </div>
+
+    <button class="save-btn">Save Changes</button>
+
+</div>
+
+</body>
+</html>
